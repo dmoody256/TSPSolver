@@ -12,7 +12,7 @@ use autodie;
 use Tkx;
 use City;
 use Network;
-use Permutor;
+use List::Permutor;
 
 ############################################################################################################################
 # intialize package variables
@@ -55,6 +55,7 @@ my $mynetwork;   ##The network object.                               ##
 ##Create and title the main window.##
 my $main_window = Tkx::widget->new(q{.});
 $main_window->g_wm_title('TSP solver');
+$main_window->g_wm_protocol('WM_DELETE_WINDOW', sub{destroy();});
 
 ##configure how main window will organize its columns and rows.##
 $main_window->g_grid_columnconfigure(0, -weight => 1);
@@ -92,7 +93,7 @@ my $etalbl           = $solutionframe->new_ttk__label (-text => 'ETA:', -anchor 
 my $permuteslbl      = $solutionframe->new_ttk__label (-text => '0/0', -anchor => 'e');
 my $totaltimelbl     = $solutionframe->new_ttk__label (-text => '0/0', -anchor => 'e');
 my $timelaplbl       = $solutionframe->new_ttk__label (-text => '0/0', -anchor => 'e');
-my $stopbutton       = $solutionframe->new_ttk__button(-text => 'Stop');
+my $stopbutton       = $solutionframe->new_ttk__button(-text => 'Quit', -command => sub {destroy();});
 my $clearlogbutton   = $solutionframe->new_ttk__button(-text => 'Clear Log', -command => sub {clearlog();});
 
 ##Organize the widgets.##
@@ -181,6 +182,12 @@ $buildstatus->configure(-textvariable => \$num_city_lbl);
 
 ##The main loop builds and runs the GUI.##
 Tkx::MainLoop;
+
+sub destroy{
+	kill('HUP', $$);
+	exit 0;
+}
+
 
 ############################################################################################################################
 #     
@@ -1202,3 +1209,5 @@ sub build_network
 
   return 1;
 }
+
+
